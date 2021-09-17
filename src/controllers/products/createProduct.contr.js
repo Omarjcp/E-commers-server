@@ -10,6 +10,7 @@ const createProduct = async (req, res) => {
     //       msg: "acceso denegado",
     //     });
     //   } else {
+    console.log(req.body);
     if (
       !name ||
       !description ||
@@ -17,7 +18,7 @@ const createProduct = async (req, res) => {
       !stock ||
       !type ||
       !image ||
-      category
+      !category
     ) {
       return res.status(404).json({
         message: "Todos los campos son obligatorios",
@@ -38,7 +39,7 @@ const createProduct = async (req, res) => {
           stock,
           type,
           image,
-          categoriumId: categoryCreate.id,
+          categoryId: categoryCreate.id,
         });
         if (productCreate) {
           res.json({
