@@ -44,17 +44,21 @@ const getProductsIdDb = async (id) => {
   }
 };
 
-//productos asociados a id de categoria pasado por parametro
-const getProductsIdCategoryDb = async (idCategory) => {
+//productos asociados a categoria pasado por parametro
+const getProductsForCategoryDb = async (name) => {
   try {
-    if (idCategory) {
-      const getProductId = await Product.findAll({
-        where: { categoryId: idCategory },
-      });
-      return getProductId;
-    }
+    const { dataValues } = await Category.findOne({
+      where: { name: name },
+    });
+    const getProductsForCategory = await Product.findAll({
+      where: { categoryId: dataValues?.id },
+    });
+    return getProductsForCategory;
   } catch (err) {
-    console.log("error al obtener producto segun id en la base de datos", err);
+    console.log(
+      "error al obtener producto segun categoria en la base de datos",
+      err
+    );
   }
 };
 
@@ -87,11 +91,29 @@ const getCategoriesIdDb = async (id) => {
   }
 };
 
+//categoria segun nombre pasado por parametro
+const getCategoriesNameDb = async (name) => {
+  try {
+    if (name) {
+      const getCategoryForName = await Category.findOne({
+        where: { name: name },
+      });
+      return getCategoryForName;
+    }
+  } catch (err) {
+    console.log(
+      "error al obtener categoria segun nombre en la base de datos",
+      err
+    );
+  }
+};
+
 module.exports = {
   getProductsDb,
-  getProductsIdCategoryDb,
+  getProductsForCategoryDb,
   getProductsNameDb,
   getProductsIdDb,
   getCategoriesDb,
   getCategoriesIdDb,
+  getCategoriesNameDb,
 };

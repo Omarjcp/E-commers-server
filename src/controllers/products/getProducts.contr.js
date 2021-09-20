@@ -1,6 +1,10 @@
 const { Product } = require("../../db");
 const { filterForName } = require("../utils/filterProductsForName");
-const { getProductsDb } = require("../utils/getDataDb");
+const {
+  getProductsDb,
+  getProductsIdDb,
+  getProductsForCategoryDb,
+} = require("../utils/getDataDb");
 
 const getProducts = async (req, res) => {
   try {
@@ -15,32 +19,36 @@ const getProducts = async (req, res) => {
         if (page) {
           let productsCut = productsFiltered.slice(page * 4, page * 4 + 4);
           res.json({
-            tipo: "productos segun el nombre y pagina",
+            type: "productos segun el nombre y pagina",
             data: productsCut,
+            longitud: productsDb.length,
           });
         } else {
           let productsCut = productsFiltered.slice(0, 4);
           res.json({
-            tipo: "productos segun el nombre del producto sin pagina",
+            type: "productos segun el nombre del producto sin pagina",
             data: productsCut,
+            longitud: productsDb.length,
           });
         }
       } else {
         res.json({
-          tipo: "Este producto no existe",
+          type: "Este producto no existe",
         });
       }
     } else {
       if (page) {
         let productsCut = productsDb.slice(page * 4, page * 4 + 4);
         res.json({
-          tipo: "productos segun el nombre y pagina",
+          type: "productos segun el nombre y pagina",
           data: productsCut,
+          longitud: productsDb.length,
         });
       } else {
         res.json({
-          tipo: "Todos los productos",
+          type: "Todos los productos",
           data: productsDb,
+          longitud: productsDb.length,
         });
       }
     }
@@ -49,6 +57,54 @@ const getProducts = async (req, res) => {
   }
 };
 
+const getOneProductsForId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    let productForIdDb = await getProductsIdDb(id);
+
+    if (productForIdDb) {
+      res.status(200).json({
+        type: "producto segun id",
+        data: productForIdDb,
+      });
+    } else {
+      res.status(404).json({
+        msg: "Producto no encontrado",
+      });
+    }
+  } catch (err) {
+    console.log("error al obtener un producto por id", err);
+  }
+};
+
+const getProductsForCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const { page } = req.query;
+
+    let productsForCategory = await getProductsForCategoryDb(category);
+
+    if (category && page) {
+      if (productsForCategory) {
+        let productsCut = productsForCategory.slice(page * 4, page * 4 + 4);
+
+        res.status(200).json({
+          type: "productos segun categoria",
+          data: productsCut,
+          longitud: productsForCategory.length,
+        });
+      } else {
+        res.status(404).json({ msg: "producto segun id no encontrado" });
+      }
+    }
+  } catch (err) {
+    console.log("error al obtener productos segun categoria", err);
+  }
+};
+
 module.exports = {
   getProducts,
+  getOneProductsForId,
+  getProductsForCategory,
 };

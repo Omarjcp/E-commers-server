@@ -10,7 +10,6 @@ const createProduct = async (req, res) => {
     //       msg: "acceso denegado",
     //     });
     //   } else {
-    console.log(req.body);
     if (
       !name ||
       !description ||
@@ -54,7 +53,7 @@ const createProduct = async (req, res) => {
           stock,
           type,
           image,
-          categoriumId: categoryDb.id,
+          categoryId: categoryDb.id,
         });
         if (productCreate) {
           res.json({
