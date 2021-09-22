@@ -1,4 +1,4 @@
-const { Product, Category } = require("../../db");
+const { Product, Category, User } = require("../../db");
 
 //productos de la base de datos
 
@@ -108,6 +108,30 @@ const getCategoriesNameDb = async (name) => {
   }
 };
 
+const getAllUsersDb = async () => {
+  try {
+    const getUsers = await User.findAll();
+
+    if (getUsers) return getUsers;
+    else undefined;
+  } catch (err) {
+    console.log("error al obtener todos los usuarios de la base de datos", err);
+  }
+};
+
+const getUserIdDb = async (id) => {
+  try {
+    if (id) {
+      let getUserId = await User.findOne({
+        where: { id: id },
+      });
+      return getUserId;
+    }
+  } catch (err) {
+    console.log("error al obtener usuario segun id en la base de datos", err);
+  }
+};
+
 module.exports = {
   getProductsDb,
   getProductsForCategoryDb,
@@ -116,4 +140,6 @@ module.exports = {
   getCategoriesDb,
   getCategoriesIdDb,
   getCategoriesNameDb,
+  getAllUsersDb,
+  getUserIdDb,
 };
