@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const { Category, Product } = require("../../db");
 
 const { getCategoriesNameDb, getProductsIdDb } = require("../utils/getDataDb");
@@ -8,76 +9,84 @@ const modifyProduct = async (req, res) => {
 
     const { name, description, price, stock, type, image, category } = req.body;
 
-    if (id) {
-      let productForId = await getProductsIdDb(id);
-
-      if (!productForId) {
-        res.status(404).json({
-          msg: "Producto no existente",
+    jwt.verify(req.token, "secretKey", async (err, data) => {
+      if (err) {
+        res.json({
+          msg: "acceso denegado",
         });
       } else {
-        if (category) {
-          let categoryDb = await getCategoriesNameDb(category);
-          if (!categoryDb) {
-            let categoryCreated = await Category.create({ name: category });
+        if (id) {
+          let productForId = await getProductsIdDb(id);
 
-            await Product.update(
-              {
-                name: name || name,
-                description: description || description,
-                price: price || price,
-                stock: stock || stock,
-                type: type || type,
-                image: image || image,
-                categoryId: categoryCreated.id,
-              },
-              { where: { id } }
-            );
-
-            res.json({
-              msg: "Producto actualizado, y categoria creada correctamente",
+          if (!productForId) {
+            res.status(404).json({
+              msg: "Producto no existente",
             });
           } else {
-            await Product.update(
-              {
-                name: name || name,
-                description: description || description,
-                price: price || price,
-                stock: stock || stock,
-                type: type || type,
-                image: image || image,
-                categoryId: categoryDb.id,
-              },
-              { where: { id } }
-            );
+            if (category) {
+              let categoryDb = await getCategoriesNameDb(category);
+              if (!categoryDb) {
+                let categoryCreated = await Category.create({ name: category });
 
-            res.json({
-              msg: "Producto actualizado correctamente",
-            });
+                await Product.update(
+                  {
+                    name: name || name,
+                    description: description || description,
+                    price: price || price,
+                    stock: stock || stock,
+                    type: type || type,
+                    image: image || image,
+                    categoryId: categoryCreated.id,
+                  },
+                  { where: { id } }
+                );
+
+                res.json({
+                  msg: "Producto actualizado, y categoria creada correctamente",
+                });
+              } else {
+                await Product.update(
+                  {
+                    name: name || name,
+                    description: description || description,
+                    price: price || price,
+                    stock: stock || stock,
+                    type: type || type,
+                    image: image || image,
+                    categoryId: categoryDb.id,
+                  },
+                  { where: { id } }
+                );
+
+                res.json({
+                  msg: "Producto actualizado correctamente",
+                });
+              }
+            } else {
+              await Product.update(
+                {
+                  name: name || name,
+                  description: description || description,
+                  price: price || price,
+                  stock: stock || stock,
+                  type: type || type,
+                  image: image || image,
+                },
+                { where: { id } }
+              );
+
+              res.json({
+                msg: "Producto actualizado correctamente",
+              });
+            }
           }
         } else {
-          await Product.update(
-            {
-              name: name || name,
-              description: description || description,
-              price: price || price,
-              stock: stock || stock,
-              type: type || type,
-              image: image || image,
-            },
-            { where: { id } }
-          );
-
-          res.json({
-            msg: "Producto actualizado correctamente",
+          res.status(404).json({
+            msg: "Debe ingresar un id de producto para ser actualizado",
           });
         }
       }
-    } else {
-      res.status(404).json({
-        msg: "Debe ingresar un id de producto para ser actualizado",
-      });
-    }
+    });
   } catch (err) {
     console.log("error al modificar producto", err);
   }

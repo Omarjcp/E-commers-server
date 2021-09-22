@@ -1,19 +1,28 @@
+const jwt = require("jsonwebtoken");
 const { getAllUsersDb, getUserIdDb } = require("../utils/getDataDb");
 
 const getUsers = async (req, res) => {
   try {
-    let usersDb = await getAllUsersDb();
+    jwt.verify(req.token, "secretKey", async (err, data) => {
+      if (err) {
+        res.json({
+          msg: "acceso denegado",
+        });
+      } else {
+        let usersDb = await getAllUsersDb();
 
-    if (usersDb) {
-      res.status(200).json({
-        type: "Todos los usuarios resgistrados",
-        data: usersDb,
-      });
-    } else {
-      res.status(404).json({
-        msg: "no existen usuarios registrados en la base de datos",
-      });
-    }
+        if (usersDb) {
+          res.status(200).json({
+            type: "Todos los usuarios resgistrados",
+            data: usersDb,
+          });
+        } else {
+          res.status(404).json({
+            msg: "no existen usuarios registrados en la base de datos",
+          });
+        }
+      }
+    });
   } catch (err) {
     console.log("error al obtener todos los usuarios", err);
   }

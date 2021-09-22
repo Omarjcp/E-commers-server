@@ -6,14 +6,17 @@ const {
   getUserById,
 } = require("../controllers/users/getUsers.contr");
 
+// comprobacion de acceso con JWT
+const middelwareToken = require(".././controllers/utils/verificationToken");
+
 const router = Router();
 
 //ruta post
 router.post("/", createUser);
-router.post("/admin", createAdmin);
+router.post("/admin", middelwareToken, createAdmin);
 
 //ruta get
-router.get("/", getUsers);
-router.get("/:id", getUserById);
+router.get("/", middelwareToken, getUsers);
+router.get("/:id", middelwareToken, getUserById);
 
 module.exports = router;

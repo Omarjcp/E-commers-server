@@ -1,4 +1,5 @@
 const midDelToken = (req, res, next) => {
+  console.log(req);
   const bearerHeader = req.headers["authorization"];
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ");
