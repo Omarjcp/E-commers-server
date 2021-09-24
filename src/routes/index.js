@@ -4,6 +4,7 @@ const { Router } = require("express");
 const products = require("./products");
 const categories = require("./categories");
 const user = require("./user");
+const login = require("./login");
 
 const router = Router();
 
@@ -11,5 +12,6 @@ const router = Router();
 router.use("/products", products);
 router.use("/categories", categories);
 router.use("/user", user);
+router.use("/login", login);
 
 module.exports = router;
