@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+
 const { Product, Category } = require("../../db");
 
 const createProduct = async (req, res) => {
@@ -7,7 +8,7 @@ const createProduct = async (req, res) => {
     jwt.verify(req.token, "secretKey", async (err, data) => {
       if (err) {
         res.json({
-          msg: "acceso denegado",
+          msg: "acceso denegado create product",
         });
       } else {
         if (
