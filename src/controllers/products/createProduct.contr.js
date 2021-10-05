@@ -5,6 +5,7 @@ const { Product, Category } = require("../../db");
 const createProduct = async (req, res) => {
   try {
     const { name, description, price, stock, type, image, category } = req.body;
+
     jwt.verify(req.token, "secretKey", async (err, data) => {
       if (err) {
         res.json({

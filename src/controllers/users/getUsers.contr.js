@@ -32,18 +32,26 @@ const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    let userDb = await getUserIdDb(id);
+    jwt.verify(req.token, "secretKey", async (err, data) => {
+      if (err) {
+        res.json({
+          msg: "acceso denegado",
+        });
+      } else {
+        let userDb = await getUserIdDb(id);
 
-    if (userDb) {
-      res.status(201).json({
-        type: "usuario segun id",
-        data: userDb,
-      });
-    } else {
-      res.status(404).json({
-        msg: "no existen usuario registrado con ese id en la base de datos",
-      });
-    }
+        if (userDb) {
+          res.status(201).json({
+            type: "usuario segun id",
+            data: userDb,
+          });
+        } else {
+          res.status(404).json({
+            msg: "no existen usuario registrado con ese id en la base de datos",
+          });
+        }
+      }
+    });
   } catch (error) {
     console.log("error al obtener usuario por id", err);
   }

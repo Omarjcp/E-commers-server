@@ -7,10 +7,10 @@ const {
   updateStateOrder,
 } = require("../controllers/orders/updateStateOrder.contr");
 const { getMyOrders } = require("../controllers/orders/getMyOrders.contr");
+const { getOrders } = require("../controllers/orders/getOrders.contr");
 
 // comprobacion de acceso con JWT
 const middelwareToken = require(".././controllers/utils/verificationToken");
-const { getOrders } = require("../controllers/orders/getOrders.contr");
 
 const router = Router();
 

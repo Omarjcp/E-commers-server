@@ -16,41 +16,41 @@ const getProducts = async (req, res) => {
       let productsFiltered = filterForName(productsDb, name);
 
       if (productsFiltered.length > 0) {
-        if (page) {
-          let productsCut = productsFiltered.slice(page * 4, page * 4 + 4);
-          res.json({
-            type: "productos segun el nombre y pagina",
-            data: productsCut,
-            longitud: productsDb.length,
-          });
-        } else {
-          let productsCut = productsFiltered.slice(0, 4);
-          res.json({
-            type: "productos segun el nombre del producto sin pagina",
-            data: productsCut,
-            longitud: productsDb.length,
-          });
-        }
+        // if (page) {
+        //   let productsCut = productsFiltered.slice(page * 4, page * 4 + 4);
+        //   res.json({
+        //     type: "productos segun el nombre y pagina",
+        //     data: productsCut,
+        //     longitud: productsDb.length,
+        //   });
+        // } else {
+        //   let productsCut = productsFiltered.slice(0, 4);
+        res.json({
+          type: "productos segun el nombre del producto sin pagina",
+          data: productsFiltered,
+          longitud: productsDb.length,
+        });
+        // }
       } else {
         res.json({
           type: "Este producto no existe",
         });
       }
     } else {
-      if (page) {
-        let productsCut = productsDb.slice(page * 4, page * 4 + 4);
-        res.json({
-          type: "productos segun el nombre y pagina",
-          data: productsCut,
-          longitud: productsDb.length,
-        });
-      } else {
-        res.json({
-          type: "Todos los productos",
-          data: productsDb,
-          longitud: productsDb.length,
-        });
-      }
+      // if (page) {
+      //   let productsCut = productsDb.slice(page * 4, page * 4 + 4);
+      //   res.json({
+      //     type: "productos segun el nombre y pagina",
+      //     data: productsCut,
+      //     longitud: productsDb.length,
+      //   });
+      // } else {
+      res.json({
+        type: "Todos los productos",
+        data: productsDb,
+        longitud: productsDb.length,
+      });
+      // }
     }
   } catch (err) {
     console.log("error al obtener productos", err);
@@ -81,22 +81,26 @@ const getOneProductsForId = async (req, res) => {
 const getProductsForCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const { page } = req.query;
+    // const { page } = req.query;
 
     let productsForCategory = await getProductsForCategoryDb(category);
 
-    if (category && page) {
-      if (productsForCategory) {
-        let productsCut = productsForCategory.slice(page * 4, page * 4 + 4);
+    if (category) {
+      if (productsForCategory.length > 0) {
+        // let productsCut = productsForCategory.slice(page * 4, page * 4 + 4);
 
         res.status(200).json({
           type: "productos segun categoria",
-          data: productsCut,
+          data: productsForCategory,
           longitud: productsForCategory.length,
         });
       } else {
-        res.status(404).json({ msg: "producto segun id no encontrado" });
+        res
+          .status(404)
+          .json({ msg: "Esta categoría no esta asociada a ningún producto" });
       }
+    } else {
+      res.status(404).json({ msg: "Categoria no encontrada" });
     }
   } catch (err) {
     console.log("error al obtener productos segun categoria", err);

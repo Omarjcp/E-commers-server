@@ -1,11 +1,19 @@
-const { Product, Category, User } = require("../../db");
+const { Op } = require("sequelize");
+const { Product, Category, User, Review } = require("../../db");
 
 //productos de la base de datos
 
 //todos los productos
 const getProductsDb = async () => {
   try {
-    const getAllProducts = await Product.findAll();
+    const getAllProducts = await Product.findAll({
+      where: {
+        stock: {
+          [Op.gt]: 0,
+        },
+      },
+      include: [{ model: Review, include: User }],
+    });
     return getAllProducts;
   } catch (err) {
     console.log(
@@ -19,7 +27,13 @@ const getProductsDb = async () => {
 const getProductsNameDb = async (nameProduct) => {
   try {
     const getAllProductsWithName = await Product.findAll({
-      where: { name: nameProduct },
+      where: {
+        name: nameProduct,
+        stock: {
+          [Op.gt]: 0,
+        },
+      },
+      include: [{ model: Review }],
     });
     return getAllProductsWithName;
   } catch (err) {
@@ -35,7 +49,13 @@ const getProductsIdDb = async (id) => {
   try {
     if (id) {
       const getProductId = await Product.findOne({
-        where: { id: id },
+        where: {
+          id: id,
+          stock: {
+            [Op.gt]: 0,
+          },
+        },
+        include: [{ model: Review }],
       });
       return getProductId;
     }
@@ -51,7 +71,13 @@ const getProductsForCategoryDb = async (name) => {
       where: { name: name },
     });
     const getProductsForCategory = await Product.findAll({
-      where: { categoryId: dataValues?.id },
+      where: {
+        categoryId: dataValues?.id,
+        stock: {
+          [Op.gt]: 0,
+        },
+      },
+      include: [{ model: Review }],
     });
     return getProductsForCategory;
   } catch (err) {
@@ -112,8 +138,8 @@ const getAllUsersDb = async () => {
   try {
     const getUsers = await User.findAll();
 
-    if (getUsers) return getUsers;
-    else undefined;
+    return getUsers;
+    // else undefined;
   } catch (err) {
     console.log("error al obtener todos los usuarios de la base de datos", err);
   }

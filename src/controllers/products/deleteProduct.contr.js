@@ -5,24 +5,32 @@ const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    let productId = await getProductsIdDb(id);
-
-    if (id) {
-      if (!productId) {
+    jwt.verify(req.token, "secretKey", async (err, data) => {
+      if (err) {
         res.json({
-          msg: "Producto no existente",
+          msg: "acceso denegado create product",
         });
       } else {
-        await Product.destroy({ where: { id } });
-        res.json({
-          msg: "Producto eliminado correctamente",
-        });
+        let productId = await getProductsIdDb(id);
+
+        if (id) {
+          if (!productId) {
+            res.json({
+              msg: "Producto no existente",
+            });
+          } else {
+            await Product.destroy({ where: { id } });
+            res.json({
+              msg: "Producto eliminado correctamente",
+            });
+          }
+        } else {
+          res.json({
+            msg: "Debe enviar un id de producto",
+          });
+        }
       }
-    } else {
-      res.json({
-        msg: "Debe enviar un id de producto",
-      });
-    }
+    });
   } catch (err) {
     console.log("error al borrar producto", err);
   }
