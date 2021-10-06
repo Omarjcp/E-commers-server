@@ -7,11 +7,6 @@ const { Product, Category, User, Review } = require("../../db");
 const getProductsDb = async () => {
   try {
     const getAllProducts = await Product.findAll({
-      where: {
-        stock: {
-          [Op.gt]: 0,
-        },
-      },
       include: [{ model: Review, include: User }],
     });
     return getAllProducts;
@@ -29,9 +24,6 @@ const getProductsNameDb = async (nameProduct) => {
     const getAllProductsWithName = await Product.findAll({
       where: {
         name: nameProduct,
-        stock: {
-          [Op.gt]: 0,
-        },
       },
       include: [{ model: Review }],
     });
@@ -51,9 +43,6 @@ const getProductsIdDb = async (id) => {
       const getProductId = await Product.findOne({
         where: {
           id: id,
-          stock: {
-            [Op.gt]: 0,
-          },
         },
         include: [{ model: Review }],
       });
@@ -73,9 +62,6 @@ const getProductsForCategoryDb = async (name) => {
     const getProductsForCategory = await Product.findAll({
       where: {
         categoryId: dataValues?.id,
-        stock: {
-          [Op.gt]: 0,
-        },
       },
       include: [{ model: Review }],
     });

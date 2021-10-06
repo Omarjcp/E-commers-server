@@ -5,6 +5,8 @@ const {
   getUsers,
   getUserById,
 } = require("../controllers/users/getUsers.contr");
+const { modifyUser } = require("../controllers/users/modifyUser.contr");
+const { resetPassword } = require("../controllers/users/resetPassword.contr");
 
 // comprobacion de acceso con JWT
 const middelwareToken = require(".././controllers/utils/verificationToken");
@@ -15,6 +17,10 @@ const router = Router();
 //ruta post
 router.post("/", createUser);
 router.post("/admin", isAdmin, createAdmin);
+
+//ruta put
+router.put("/", middelwareToken, modifyUser);
+router.put("/reset_password", middelwareToken, resetPassword);
 
 //ruta get
 router.get("/", isAdmin, getUsers);
